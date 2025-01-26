@@ -33,6 +33,16 @@ export class NavigationLoaderService {
           }
         ]
       },
+      {
+        type: 'subheading',
+        label: 'Drivers',
+        children: [ {
+          type: 'link',
+          label: 'All Drivers',
+          route: '/drivers/view-all',
+          icon: 'mat:drive_eta'
+        },]
+      },
     ]);
   }
 }

@@ -1,5 +1,8 @@
 <div class="flex-auto flex items-center container">
   <div class="font-medium ltr:ml-4 rtl:mr-4 hidden sm:block">
-    &copy; 2025 DriverGraze.com
+    &copy; 2025 <img
+    [src]="imageUrl$ | async"
+    alt="Logo"
+    class="w-6 select-none inline-block ms-4" /> drivergraze.com
   </div>
 </div>
