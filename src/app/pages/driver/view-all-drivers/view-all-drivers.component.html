@@ -68,6 +68,15 @@
               placeholder="Search&hellip;"
               type="text" />
           </mat-form-field>
+          <button
+          (click)="refreshTableData()"
+          class="ml-4 flex-none"
+          color="primary"
+          mat-mini-fab
+          matTooltip="Refresh Table Data"
+          type="button">
+          <mat-icon svgIcon="mat:refresh"></mat-icon>
+        </button>
   
           <span class="flex-1"></span>
   
@@ -135,12 +144,12 @@
               [matColumnDef]="column.property">
               <th
                 *matHeaderCellDef
-                class="uppercase"
+                class="uppercase font-bold"
                 mat-header-cell
                 mat-sort-header>
                 {{ column.label }}
               </th>
-              <td *matCellDef="let row" [ngClass]="column.cssClasses" mat-cell>
+              <td *matCellDef="let row" [ngClass]="column.label === 'Available for Work' ? (row[column.property] === 'YES' ? 'text-green-700 font-bold': 'text-red-600 font-bold') : column.cssClasses" mat-cell>
                 {{ row[column.property] }}
               </td>
             </ng-container>

@@ -1,8 +1,20 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { NgIf, NgFor, NgClass } from '@angular/common';
-import { AfterViewInit, Component, DestroyRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { NgIf, NgFor, NgClass, formatDate } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormControl
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,16 +28,16 @@ import { VexPageLayoutContentDirective } from '@vex/components/vex-page-layout/v
 import { VexPageLayoutHeaderDirective } from '@vex/components/vex-page-layout/vex-page-layout-header.directive';
 import { VexPageLayoutComponent } from '@vex/components/vex-page-layout/vex-page-layout.component';
 import { TableColumn } from '@vex/interfaces/table-column.interface';
-import { ReplaySubject, Observable, of, filter } from 'rxjs';
-import { Driver } from './interfaces/driver.model';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatSelectChange } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { aioTableData, aioTableLabels } from 'src/static-data/aio-table-data';
-
+import { aioTableLabels } from 'src/static-data/aio-table-data';
+import { DriverDataService } from '../_core/services/driver-data.service';
+import { DriverDetailsTable } from '../_core/interfaces/driver.interface';
+import { format } from 'path';
 
 @Component({
   selector: 'dg-view-all-drivers',
@@ -59,23 +71,17 @@ import { aioTableData, aioTableLabels } from 'src/static-data/aio-table-data';
 export class ViewAllDriversComponent implements OnInit, AfterViewInit {
   layoutCtrl = new UntypedFormControl('fullwidth');
 
-  /**
-   * Simulating a service with HTTP that returns Observables
-   * You probably want to remove this and do all requests in a service with HTTP
-   */
-  subject$: ReplaySubject<Driver[]> = new ReplaySubject<Driver[]>(1);
-  data$: Observable<Driver[]> = this.subject$.asObservable();
-  drivers: Driver[] = [];
+  drivers: DriverDetailsTable[] = [];
 
   @Input()
-  columns: TableColumn<Driver>[] = [
+  columns: TableColumn<DriverDetailsTable>[] = [
     {
       label: 'Checkbox',
       property: 'checkbox',
       type: 'checkbox',
       visible: true
     },
-    { label: 'Image', property: 'image', type: 'image', visible: true },
+    // { label: 'Image', property: 'image', type: 'image', visible: true },
     {
       label: 'Name',
       property: 'name',
@@ -83,56 +89,54 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
       visible: true,
       cssClasses: ['font-medium']
     },
+    { label: 'Alias Name', property: 'aliasName', type: 'text', visible: true },
+    { label: 'Total Experience', property: 'totalExperienceInYears', type: 'text', visible: true },
+    { label: 'International Experience', property: 'internationalExperience', type: 'text', visible: true },
+    { label: 'Available for Work', property: 'availableForWork', type: 'text', visible: true, cssClasses: ['font-bold'] },
+    // { label: 'Contact', property: 'contact', type: 'button', visible: false },
+    // {
+    //   label: 'Address',
+    //   property: 'address',
+    //   type: 'text',
+    //   visible: true,
+    //   cssClasses: ['text-secondary', 'font-medium']
+    // },
     {
-      label: 'First Name',
-      property: 'firstName',
-      type: 'text',
-      visible: false
-    },
-    { label: 'Last Name', property: 'lastName', type: 'text', visible: false },
-    { label: 'Contact', property: 'contact', type: 'button', visible: true },
-    {
-      label: 'Address',
-      property: 'address',
+      label: 'Spoken Languages',
+      property: 'spokenLanguages',
       type: 'text',
       visible: true,
       cssClasses: ['text-secondary', 'font-medium']
     },
     {
-      label: 'Street',
-      property: 'street',
+      label: 'License Types',
+      property: 'licenseTypes',
       type: 'text',
-      visible: false,
+      visible: true,
       cssClasses: ['text-secondary', 'font-medium']
     },
     {
-      label: 'Zipcode',
-      property: 'zipcode',
+      label: 'Pincode',
+      property: 'pincode',
       type: 'text',
-      visible: false,
+      visible: true,
       cssClasses: ['text-secondary', 'font-medium']
     },
     {
       label: 'City',
       property: 'city',
       type: 'text',
-      visible: false,
-      cssClasses: ['text-secondary', 'font-medium']
-    },
-    {
-      label: 'Phone',
-      property: 'phoneNumber',
-      type: 'text',
       visible: true,
       cssClasses: ['text-secondary', 'font-medium']
     },
-    { label: 'Labels', property: 'labels', type: 'button', visible: true },
+
+    // { label: 'Labels', property: 'labels', type: 'button', visible: true },
     { label: 'Actions', property: 'actions', type: 'button', visible: true }
   ];
   pageSize = 10;
   pageSizeOptions: number[] = [5, 10, 20, 50];
-  dataSource!: MatTableDataSource<Driver>;
-  selection = new SelectionModel<Driver>(true, []);
+  dataSource!: MatTableDataSource<DriverDetailsTable>;
+  selection = new SelectionModel<DriverDetailsTable>(true, []);
   searchCtrl = new UntypedFormControl();
 
   labels = aioTableLabels;
@@ -142,7 +146,10 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
 
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private driverDataService: DriverDataService
+  ) {}
 
   get visibleColumns() {
     return this.columns
@@ -150,25 +157,34 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
       .map((column) => column.property);
   }
 
-  /**
-   * Example on how to get data and pass it to the table - usually you would want a dedicated service with a HTTP request for this
-   * We are simulating this request here.
-   */
-  getData() {
-    return of(aioTableData.map((driver) => new Driver(driver)));
+  fetchAllDrivers(): void {
+    this.driverDataService.fetchAllDrivers().subscribe((drivers) => {
+      const temp = drivers.map((driver) => ({
+        id: driver.id,
+        name:
+          driver.firstName + ' ' + driver.middleName + ' ' + driver.lastName,
+        aliasName: driver.aliasName,
+        spokenLanguages: driver.spokenLanguages
+          .map((language) => language)
+          .join(', '),
+        driverCategory: driver.driverCategory,
+        licenseTypes: driver.licenseTypes
+          .map((licenseType) => licenseType)
+          .join(', '),
+        totalExperienceInYears: (driver.totalExperienceInMonths / 12) + ' years',
+        internationalExperience: driver.internationalExperience,
+        availableForWork: driver.availableForWork ? 'YES' : 'NO',
+        pincode: driver.pincode,
+        city: driver.state
+      }));
+      this.drivers = temp;
+      this.dataSource.data = temp;
+    });
   }
 
   ngOnInit() {
-    this.getData().subscribe((drivers) => {
-      this.subject$.next(drivers);
-    });
-
     this.dataSource = new MatTableDataSource();
-
-    this.data$.pipe(filter<Driver[]>(Boolean)).subscribe((drivers) => {
-      this.drivers = drivers;
-      this.dataSource.data = drivers;
-    });
+    this.fetchAllDrivers();
 
     this.searchCtrl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -183,6 +199,11 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     if (this.sort) {
       this.dataSource.sort = this.sort;
     }
+  }
+
+  refreshTableData(): void {
+    this.selection.clear(true);
+    this.fetchAllDrivers();
   }
 
   createDriver() {
@@ -204,7 +225,7 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     //   });
   }
 
-  updateDriver(driver: Driver) {
+  updateDriver(driver: DriverDetailsTable) {
     // this.dialog
     //   .open(DriverCreateUpdateComponent, {
     //     data: driver
@@ -228,22 +249,20 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     //   });
   }
 
-  deleteDriver(driver: Driver) {
-    /**
-     * Here we are updating our local array.
-     * You would probably make an HTTP request here.
-     */
-    this.drivers.splice(
-      this.drivers.findIndex(
-        (existingDriver) => existingDriver.id === driver.id
-      ),
-      1
-    );
+  deleteDriver(driver: DriverDetailsTable) {
     this.selection.deselect(driver);
-    this.subject$.next(this.drivers);
+    this.driverDataService.deleteDriver(driver.id).subscribe({
+      next: () => {
+        console.log('Driver deleted');
+        this.fetchAllDrivers();
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      }
+    });
   }
 
-  deleteDrivers(drivers: Driver[]) {
+  deleteDrivers(drivers: DriverDetailsTable[]) {
     /**
      * Here we are updating our local array.
      * You would probably make an HTTP request here.
@@ -260,7 +279,10 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = value;
   }
 
-  toggleColumnVisibility(column: TableColumn<Driver>, event: Event) {
+  toggleColumnVisibility(
+    column: TableColumn<DriverDetailsTable>,
+    event: Event
+  ) {
     event.stopPropagation();
     event.stopImmediatePropagation();
     column.visible = !column.visible;
@@ -284,9 +306,9 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     return column.property;
   }
 
-  onLabelChange(change: MatSelectChange, row: Driver) {
-    const index = this.drivers.findIndex((c) => c === row);
-    this.drivers[index].labels = change.value;
-    this.subject$.next(this.drivers);
-  }
+  // onLabelChange(change: MatSelectChange, row: DriverDetailsTable) {
+  //   const index = this.drivers.findIndex((c) => c === row);
+  //   this.drivers[index].labels = change.value;
+  //   this.subject$.next(this.drivers);
+  // }
 }
