@@ -38,6 +38,7 @@ import { aioTableLabels } from 'src/static-data/aio-table-data';
 import { DriverDataService } from '../_core/services/driver-data.service';
 import { DriverDetailsTable } from '../_core/interfaces/driver.interface';
 import { format } from 'path';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'dg-view-all-drivers',
@@ -148,7 +149,8 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
 
   constructor(
     private dialog: MatDialog,
-    private driverDataService: DriverDataService
+    private driverDataService: DriverDataService,
+    private router: Router
   ) {}
 
   get visibleColumns() {
@@ -223,6 +225,7 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     //       this.subject$.next(this.drivers);
     //     }
     //   });
+    this.router.navigate(['/drivers/add-driver']);
   }
 
   updateDriver(driver: DriverDetailsTable) {
@@ -247,6 +250,7 @@ export class ViewAllDriversComponent implements OnInit, AfterViewInit {
     //       this.subject$.next(this.drivers);
     //     }
     //   });
+    this.router.navigate(['/drivers/edit-driver/' + driver.id]);
   }
 
   deleteDriver(driver: DriverDetailsTable) {
