@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddEditDriverComponent } from './add-edit-driver.component';
+import { EditDriverComponent } from './edit-driver.component';
 
-describe('AddEditDriverComponent', () => {
-  let component: AddEditDriverComponent;
-  let fixture: ComponentFixture<AddEditDriverComponent>;
+describe('EditDriverComponent', () => {
+  let component: EditDriverComponent;
+  let fixture: ComponentFixture<EditDriverComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddEditDriverComponent]
+      imports: [EditDriverComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(AddEditDriverComponent);
+    fixture = TestBed.createComponent(EditDriverComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

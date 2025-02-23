@@ -14,8 +14,8 @@ export const driverRoutes: Routes = [
   {
     path: 'add-driver',
     loadComponent: () =>
-      import('./add-edit-driver/add-edit-driver.component').then(
-        (m) => m.AddEditDriverComponent
+      import('./add-driver/add-driver.component').then(
+        (m) => m.AddDriverComponent
       ),
     data: {
       toolbarShadowEnabled: false
@@ -24,8 +24,8 @@ export const driverRoutes: Routes = [
   {
     path: 'edit-driver/:id',
     loadComponent: () =>
-      import('./add-edit-driver/add-edit-driver.component').then(
-        (m) => m.AddEditDriverComponent
+      import('./edit-driver/edit-driver.component').then(
+        (m) => m.EditDriverComponent
       ),
     data: {
       toolbarShadowEnabled: false
