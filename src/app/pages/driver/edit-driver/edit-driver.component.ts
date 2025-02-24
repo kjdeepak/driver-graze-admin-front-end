@@ -64,7 +64,17 @@ export class EditDriverComponent implements OnInit {
     spokenLanguages: [null, Validators.required],
   });
 
-  verticalPasswordFormGroup: UntypedFormGroup = this.fb.group({
+  professionalDetailsFormGroup: UntypedFormGroup = this.fb.group({
+    driverCategory: [null, Validators.required],
+    licenseTypes: [null, Validators.required],
+    licenseNumber: [null, Validators.required],
+    licenseExpiryDate: [null, Validators.required],
+    totalExperienceInMonths: [null, Validators.required],
+    internationalExperience: [null, Validators.required],
+    vehicleType: [null, Validators.required],
+  });
+
+  locationDetailsFormGroup: UntypedFormGroup = this.fb.group({
     password: [
       null,
       Validators.compose([Validators.required, Validators.minLength(6)])
@@ -95,6 +105,30 @@ export class EditDriverComponent implements OnInit {
       next: (driverDetails) => {
         console.log(driverDetails);
         // this.verticalAccountFormGroup.patchValue(driverDetails);
+        this.personalInformationFormGroup.patchValue({
+          firstName: driverDetails.firstName,
+          middleName: driverDetails.middleName,
+          lastName: driverDetails.lastName,
+          aliasName: driverDetails.aliasName,
+          dateOfBirth: driverDetails.dateOfBirth,
+          email: driverDetails.email,
+          primaryMobilePrefix: '+91',
+          primaryMobile: driverDetails.mobileNumber,
+          alternativeMobilePrefix: '+91',
+          alternativeMobile: driverDetails.alternateMobileNumber,
+          aadhaarNumber: driverDetails.aadhaarNumber,
+          spokenLanguages: driverDetails.spokenLanguages
+        });
+
+        this.professionalDetailsFormGroup.patchValue({
+          driverCategory: driverDetails.driverCategory,
+          licenseTypes: driverDetails.licenseTypes,
+          licenseNumber: driverDetails.licenseNumber,
+          licenseExpiryDate: driverDetails.licenseExpiryDate,
+          totalExperienceInMonths: driverDetails.totalExperienceInMonths,
+          internationalExperience: driverDetails.internationalExperience,
+          vehicleType: driverDetails.vehicleType
+        });
       }});
   }
 
