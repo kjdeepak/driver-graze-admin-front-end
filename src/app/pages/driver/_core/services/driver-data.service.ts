@@ -22,8 +22,8 @@ export class DriverDataService {
     return this.httpClient.post<DriverDetails>(environment.baseUrl + '/drivers', driver);
   }
 
-  updateDriver(driver: any): Observable<DriverDetails> {
-    return this.httpClient.put<DriverDetails>(environment.baseUrl + '/drivers', driver);
+  updateDriver(id: string, driver: DriverDetails): Observable<DriverDetails> {
+    return this.httpClient.patch<DriverDetails>(environment.baseUrl + '/drivers/' + id, driver);
   }
 
   deleteDriver(id: string): Observable<void> {

@@ -192,41 +192,41 @@
                 <form [formGroup]="locationDetailsFormGroup">
                     <ng-template matStepLabel>Location And Availability Details</ng-template>
 
-                    <!-- <div class="title m-0">Select a Password</div>
-                    <div class="subheading-1">
-                        Enter your password you will use to log in.
-                    </div> -->
-
                     <div class="mt-4 flex flex-col gap-2">
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-6">
+                            <mat-form-field class="flex-auto">
+                                <mat-label>correspondence Address</mat-label>
+                                <input formControlName="correspondenceAddress" matInput required />
+                            </mat-form-field>
+                            </div>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-6">
                         <mat-form-field class="flex-auto">
-                            <mat-label>Password</mat-label>
-                            <input [type]="passwordInputType" formControlName="password" matInput required />
-                            <button (click)="showPassword()" *ngIf="passwordInputType === 'password'" mat-icon-button
-                                matIconSuffix type="button">
-                                <mat-icon svgIcon="mat:visibility"></mat-icon>
-                            </button>
-                            <button (click)="hidePassword()" *ngIf="passwordInputType === 'text'" mat-icon-button
-                                matIconSuffix type="button">
-                                <mat-icon svgIcon="mat:visibility_off"></mat-icon>
-                            </button>
-                            <mat-hint>Your password should be atleast 6 characters long.
-                            </mat-hint>
-                        </mat-form-field>
+                                <mat-label>Pincode</mat-label>
+                                <input formControlName="pincode" matInput required />
+                            </mat-form-field>
+                            <mat-form-field class="flex-auto">
+                                <mat-label>State</mat-label>
+                                <input formControlName="state" matInput required />
+                            </mat-form-field>
+                            <mat-form-field class="flex-auto">
+                                <mat-label>Available For Work ?</mat-label>
+                                <mat-select formControlName="availableForWork">
+                                    <mat-option *ngFor="let option of availableForWorkOptions" [value]="option">{{ option }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
 
-                        <mat-form-field class="flex-auto">
-                            <mat-label>Confirm Password</mat-label>
-                            <input [type]="passwordInputType" formControlName="passwordConfirm" matInput required />
-                            <button (click)="showPassword()" *ngIf="passwordInputType === 'password'" mat-icon-button
-                                matIconSuffix type="button">
-                                <mat-icon svgIcon="mat:visibility"></mat-icon>
-                            </button>
-                            <button (click)="hidePassword()" *ngIf="passwordInputType === 'text'" mat-icon-button
-                                matIconSuffix type="button">
-                                <mat-icon svgIcon="mat:visibility_off"></mat-icon>
-                            </button>
-                            <mat-hint>Please type in your password again.</mat-hint>
-                        </mat-form-field>
-                    </div>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-6">
+                            <mat-form-field class="flex-auto">
+                                <mat-label>Additional Skills</mat-label>
+                                <input formControlName="additionalSkills" matInput required />
+                            </mat-form-field>
+                            <mat-form-field class="flex-auto">
+                                <mat-label>Professional References</mat-label>
+                                <input formControlName="professionalReferences" matInput required />
+                            </mat-form-field>
+                        </div>
+                        </div>
 
                     <div class="actions flex items-center justify-end gap-2">
                         <button color="primary" mat-button matStepperPrevious type="button">
@@ -247,7 +247,7 @@
                     <div class="title m-0">You're almost there!</div>
                     <div class="subheading-1">
                         To finish registration, accept our terms of service and click on
-                        "Create Account".
+                        "Submit".
                     </div>
 
                     <div class="mt-4 flex flex-col gap-2">
@@ -262,7 +262,7 @@
                         </button>
                         <button (click)="submit()" [disabled]="verticalConfirmFormGroup.invalid" color="primary"
                             mat-raised-button matStepperNext>
-                            CREATE ACCOUNT
+                            SUBMIT
                         </button>
                     </div>
                 </form>

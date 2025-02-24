@@ -47,8 +47,9 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
   ]
 })
 export class EditDriverComponent implements OnInit {
- phonePrefixOptions = ['+91'];
-
+  phonePrefixOptions = ['+91'];
+  availableForWorkOptions = [true, false];
+  
   personalInformationFormGroup: UntypedFormGroup = this.fb.group({
     firstName: [null, Validators.required],
     middleName: [null, Validators.required],
@@ -75,11 +76,12 @@ export class EditDriverComponent implements OnInit {
   });
 
   locationDetailsFormGroup: UntypedFormGroup = this.fb.group({
-    password: [
-      null,
-      Validators.compose([Validators.required, Validators.minLength(6)])
-    ],
-    passwordConfirm: [null, Validators.required]
+    correspondenceAddress: [null, Validators.required],
+    pincode: [null, Validators.required],
+    state: [null, Validators.required],
+    availableForWork: [null, Validators.required],
+    additionalSkills: [null],
+    professionalReferences: [null]
   });
 
   verticalConfirmFormGroup: UntypedFormGroup = this.fb.group({
@@ -93,7 +95,8 @@ export class EditDriverComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private snackbar: MatSnackBar,
     private activatedRoute: ActivatedRoute,
-    private driverDataService: DriverDataService
+    private driverDataService: DriverDataService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -129,6 +132,15 @@ export class EditDriverComponent implements OnInit {
           internationalExperience: driverDetails.internationalExperience,
           vehicleType: driverDetails.vehicleType
         });
+
+        this.locationDetailsFormGroup.patchValue({
+          correspondenceAddress: driverDetails.correspondenceAddress,
+          pincode: driverDetails.pincode,
+          state: driverDetails.state,
+          availableForWork: driverDetails.availableForWork,
+          additionalSkills: driverDetails.additionalSkills,
+          professionalReferences: driverDetails.professionalReferences
+        });
       }});
   }
 
@@ -143,12 +155,22 @@ export class EditDriverComponent implements OnInit {
   }
 
   submit() {
-    this.snackbar.open(
-      'Hooray! You successfully created your account.',
-      undefined,
-      {
-        duration: 5000
+      this.driverDataService.updateDriver(this.activatedRoute.snapshot.params['id'], {
+      ...this.personalInformationFormGroup.value,
+      ...this.professionalDetailsFormGroup.value,
+      ...this.locationDetailsFormGroup.value,
+      totalExperienceInMonths: +this.professionalDetailsFormGroup.value.totalExperienceInMonths,
+    }).subscribe({
+      next: () => {
+        this.snackbar.open(
+          'Driver details updated successfully',
+          undefined,
+          {
+            duration: 5000
+          }
+        );
+        this.router.navigate(['/drivers/view-all']);
       }
-    );
+    });
   }
 }

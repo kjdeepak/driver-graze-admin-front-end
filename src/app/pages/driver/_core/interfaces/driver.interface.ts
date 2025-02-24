@@ -17,6 +17,7 @@ export interface DriverDetails {
   totalExperienceInMonths: number;
   internationalExperience: string;
   vehicleType: string[];
+  correspondenceAddress: string;
   pincode: string;
   state: string;
   availableForWork: boolean;
